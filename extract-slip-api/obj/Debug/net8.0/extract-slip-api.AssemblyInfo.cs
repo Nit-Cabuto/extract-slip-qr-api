@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("extract-slip-api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+51008684a83ac40cda282b1f37ac060a93abecd7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+949b13af07d43304038f0bb5fb9035e9d4bcb8ef")]
 [assembly: System.Reflection.AssemblyProductAttribute("extract-slip-api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("extract-slip-api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

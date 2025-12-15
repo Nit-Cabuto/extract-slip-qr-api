@@ -74,7 +74,7 @@ namespace extract_slip_api.Services
                                             .GetProperty("content")
                                             .GetString()!;
 
-                                result.result = content.Split('\n');            
+                                result.result = content.Split('\n');
                             }
                             else
                             {
@@ -112,7 +112,7 @@ namespace extract_slip_api.Services
                 var stream = file.OpenReadStream();
                 var barcodeBitmap = (Bitmap)Image.FromStream(stream);
                 reader.Options.TryHarder = true;
-                
+
                 resultData.result = reader.Decode(barcodeBitmap).Text;
                 resultData.status = 200;
             }
@@ -152,10 +152,25 @@ namespace extract_slip_api.Services
 
                 if (!res.IsSuccessful) throw new Exception(res.Content);
 
-                //var doc = JsonDocument.Parse(res.Content!);
+                var doc = JsonDocument.Parse(res.Content!);
 
-                resultData.result = res.Content;
-              
+                //resultData.result = res.Content;
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                Root result = JsonSerializer.Deserialize<Root>(res.Content!, options)!;
+
+                resultData.status = result.Status;
+                resultData.result = new object[]
+                {
+                    "Price : " + result.Data.Amount.Amount,
+                    "Ref 1 : " + result.Data.Ref1,
+                    "Ref 2 : " + result.Data.Ref2,
+                };
+
                 //return Content(res.Content!, "application/json");
             }
             catch (System.Exception ex)
@@ -167,5 +182,88 @@ namespace extract_slip_api.Services
 
             return resultData;
         }
+
+        public class Root
+        {
+            public int Status { get; set; }
+            public Data Data { get; set; } = null!;
+        }
+
+        public class Data
+        {
+            public string Payload { get; set; } = "";
+            public string TransRef { get; set; } = "";
+            public DateTime Date { get; set; }
+            public string CountryCode { get; set; } = "";
+            public Amounts Amount { get; set; } = null!;
+            public decimal Fee { get; set; }
+            public string Ref1 { get; set; } = "";
+            public string Ref2 { get; set; } = "";
+            public string Ref3 { get; set; } = "";
+            public Sender Sender { get; set; } = null!;
+            public Receiver Receiver { get; set; } = null!;
+        }
+
+        public class Amounts
+        {
+            public decimal Amount { get; set; }
+            public Local Local { get; set; } = null!;
+        }
+
+        public class Local
+        {
+            public decimal Amount { get; set; }
+            public string Currency { get; set; } = "";
+        }
+
+        public class Sender
+        {
+            public Bank Bank { get; set; } = null!;
+            public SenderAccount Account { get; set; } = null!;
+        }
+
+        public class Bank
+        {
+            public string Id { get; set; } = "";
+            public string Name { get; set; } = "";
+            public string Short { get; set; } = "";
+        }
+
+        public class SenderAccount
+        {
+            public Name Name { get; set; } = null!;
+            public BankAccount Bank { get; set; } = null!;
+        }
+
+        public class Name
+        {
+            public string Th { get; set; } = "";
+        }
+
+        public class BankAccount
+        {
+            public string Type { get; set; } = "";
+            public string Account { get; set; } = "";
+        }
+
+        public class Receiver
+        {
+            public object Bank { get; set; } = null!;
+            public ReceiverAccount Account { get; set; } = null!;
+        }
+
+        public class ReceiverAccount
+        {
+            public Name Name { get; set; } = null!;
+            public Proxy Proxy { get; set; } = null!;
+        }
+
+        public class Proxy
+        {
+            public string Type { get; set; } = "";
+            public string Account { get; set; } = "";
+        }
+
+
     }
 }
